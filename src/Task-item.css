@@ -1,0 +1,88 @@
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    margin-top: 20px;
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 2;
+}
+
+.task-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: none;
+}
+
+.task-title {
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    color: #333;
+}
+
+.task-description {
+    font-size: 14px;
+    margin: 0;
+    color: #666;
+}
+
+.task-detail {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.icon-btn {
+    border: none;
+    color: #666;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.icon-btn:hover {
+    color: #333;
+}
+
+.task-title.completed {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.task-description.completed {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.task-duedate {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgb(215, 212, 212);
+    color: #333;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 450;
+}
+
+.task-priority, .task-category {
+    background-color: #f0f0f0;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 450;
+}

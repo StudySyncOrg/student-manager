@@ -1,0 +1,233 @@
+.page-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+.page-title h1{
+   /* margin: 20px 0 4px 0;*/
+   margin:0px 0 0 40px ;
+    font-size: 26px;
+    color: black;
+}
+.task-container{
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    padding: 40px;
+    margin: 30px;
+    
+}
+.page-title p{
+    margin: 30px;
+    font-size: 15px;
+    color: black;
+
+}
+.addtask-btn{
+    background-color: #5a52b5;
+    color:white;
+    border: none;
+    border-radius:5px;
+    padding: 10px 16px;
+    font-size:20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease-in-out;
+}
+.addtask-btn:hover{
+    background-color: #484294;
+}
+.stat-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-left:40px;
+    
+}
+.statcard{
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+    box-shadow: 0px 1px 3px rgba(0,0,0,0.8);
+    
+}
+.stat-title{
+    margin:0 0 8px 0;
+    color: black;
+    font-size: 14px;
+}
+.stat-count{
+    margin: 0px;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+}
+.stat-colorbar{
+    width: 5px;
+    height: 40px;
+    border-radius: 3px;
+}
+/*.search-n-filter{
+    background-color: white;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    margin-bottom: 30px;
+}*/
+.search-n-filters{
+    padding: 20px;
+
+}
+.searchbar{
+    display: flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.searchicon{
+    color: #888;
+    margin-right: 10px;
+}
+.searchinput{
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 15px;
+    color: rgb(67, 67, 67);
+}
+.searchinput::placeholder{
+    color: #aaa;
+}
+.filter-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px 20px;
+    margin-left: 0px;
+    
+    display: block;
+    flex-direction: column;
+}
+.filter-grp{
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+.filter-icon{
+    color: grey;
+}
+.label{
+    font-weight: 550px;
+    color: rgb(65, 64, 64);
+    margin-right: 4px;
+    font-size: 15px;
+    gap: 10px;
+    
+}
+.btn{
+    background-color: #f0f4f8;
+    color: #555;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.btn:hover{
+    background-color: #e2e8f0;
+}
+.btn.active{
+    background-color: #E1E6FC;
+    color: #454791;
+}
+.task-list,.empty-task{
+    border: none;
+    padding-top: 20px;
+}
+.empty-task{
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    justify-content: center;
+    
+    text-align: center;
+    
+
+}
+.empty-task-icon{
+    background-color: #f0f4f8;
+    color: #999;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    
+    
+}
+.empty-task-text{
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+.empty-task-text2{
+    font-size: 15px;
+    color: #777;
+    margin: 0 25px 0 32px;
+   
+}
+.add-first-task-btn{
+    background-color: #5a52b5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+    margin-top: 30px;
+}
+
+.add-first-task-btn:hover{
+    background-color: #484294;
+}
+/* Update icon sizes and spacing if needed */
+.addtask-btn,
+.add-first-task-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.searchicon,
+.filter-icon {
+    color: #888;
+}
+
+.empty-task-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
