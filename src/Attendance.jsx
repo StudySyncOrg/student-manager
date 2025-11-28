@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AttendanceCalculator = () => {
-  const [subjects, setSubjects] = useState([]);
+  // Load subjects from localStorage on initial render
+  const [subjects, setSubjects] = useState(() => {
+    const savedSubjects = localStorage.getItem('attendanceSubjects');
+    return savedSubjects ? JSON.parse(savedSubjects) : [];
+  });
+
+  // Save subjects to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('attendanceSubjects', JSON.stringify(subjects));
+  }, [subjects]);
+
   const [currentView, setCurrentView] = useState('overview');
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -40,6 +50,21 @@ const AttendanceCalculator = () => {
     }));
   };
 
+  // Add a function to delete a subject
+  const deleteSubject = (subjectId) => {
+    if (window.confirm('Are you sure you want to delete this subject?')) {
+      setSubjects(subjects.filter(subject => subject.id !== subjectId));
+    }
+  };
+
+  // Add a function to clear all data
+  const clearAllData = () => {
+    if (window.confirm('Are you sure you want to clear all attendance data? This cannot be undone.')) {
+      setSubjects([]);
+      localStorage.removeItem('attendanceSubjects');
+    }
+  };
+
   const calculateRequiredClasses = (present, total, target = 75) => {
     if (total === 0) return 0;
     const required = Math.ceil((target * total - 100 * present) / (100 - target));
@@ -70,21 +95,43 @@ const AttendanceCalculator = () => {
           
           return (
             <div key={subject.id} style={subjectCardStyle}>
-              <h3 style={{ margin: '0 0 10px 0' }}>{subject.name}</h3>
+              <div style={subjectHeaderStyle}>
+                <h3 style={{ margin: '0 0 10px 0', flex: 1 }}>{subject.name}</h3>
+                <button 
+                  style={deleteButtonStyle}
+                  onClick={() => deleteSubject(subject.id)}
+                  title="Delete subject"
+                >
+                  ×
+                </button>
+              </div>
               <div style={percentageStyle}>{percentage}%</div>
               <div style={statsStyle}>
                 <div>Present: {subject.present}</div>
                 <div>Required: 75%</div>
                 <div>Total: {subject.total}</div>
               </div>
-              {requiredClasses > 0 && (
+              {requiredClasses > 0 ? (
                 <div style={requiredStyle}>
                   ✔ Attend next {requiredClasses} classes to reach 75%
+                </div>
+              ) : (
+                <div style={safeStyle}>
+                  ✅ You have achieved 75% attendance!
                 </div>
               )}
             </div>
           );
         })}
+        
+        {/* Clear All Data Button */}
+        {subjects.length > 0 && (
+          <div style={clearAllContainerStyle}>
+            <button style={clearAllButtonStyle} onClick={clearAllData}>
+              Clear All Data
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -115,8 +162,19 @@ const AttendanceCalculator = () => {
         
         {subjects.map(subject => (
           <div key={subject.id} style={subjectCardStyle}>
-            <h3 style={{ margin: '0 0 10px 0' }}>{subject.name}</h3>
-            <div style={currentStatsStyle}>Current: {subject.present}/{subject.total} classes</div>
+            <div style={subjectHeaderStyle}>
+              <h3 style={{ margin: '0 0 10px 0', flex: 1 }}>{subject.name}</h3>
+              <button 
+                style={deleteButtonStyle}
+                onClick={() => deleteSubject(subject.id)}
+                title="Delete subject"
+              >
+                ×
+              </button>
+            </div>
+            <div style={currentStatsStyle}>
+              Current: {subject.present}/{subject.total} classes ({getAttendancePercentage(subject.present, subject.total)}%)
+            </div>
             <div style={buttonGroupStyle}>
               <button 
                 style={{...attendanceButton, backgroundColor: '#4CAF50'}}
@@ -166,7 +224,12 @@ const AttendanceCalculator = () => {
         <h3>Subject Performance</h3>
         {subjects.map(subject => (
           <div key={subject.id} style={performanceItemStyle}>
-            <strong>{subject.name}</strong>
+            <div>
+              <strong>{subject.name}</strong>
+              <span style={percentageBadgeStyle}>
+                {getAttendancePercentage(subject.present, subject.total)}%
+              </span>
+            </div>
             <span>{subject.present}/{subject.total} classes</span>
           </div>
         ))}
@@ -176,17 +239,33 @@ const AttendanceCalculator = () => {
           <p style={{ color: '#666', textAlign: 'center' }}>No attendance records yet</p>
         ) : (
           <div style={tableStyle}>
-            {allAttendance.map((record, index) => (
+            {allAttendance.slice(0, 10).map((record, index) => (
               <div key={index} style={tableRowStyle}>
-                <span style={statusCellStyle}>{record.status}</span>
+                <span style={{...statusCellStyle, color: getStatusColor(record.status)}}>
+                  {record.status}
+                </span>
                 <span style={subjectCellStyle}>{record.subjectName}</span>
                 <span style={dateCellStyle}>{record.date}</span>
               </div>
             ))}
+            {allAttendance.length > 10 && (
+              <div style={moreRecordsStyle}>
+                ... and {allAttendance.length - 10} more records
+              </div>
+            )}
           </div>
         )}
       </div>
     );
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'present': return '#4CAF50';
+      case 'late': return '#FF9800';
+      case 'absent': return '#f44336';
+      default: return '#666';
+    }
   };
 
   // Render current view
@@ -208,6 +287,11 @@ const AttendanceCalculator = () => {
       <header style={headerStyle}>
         <h1 style={titleStyle}>Attendance Calculator</h1>
         <p style={subtitleStyle}>Track your attendance and calculate required classes</p>
+        {subjects.length > 0 && (
+          <p style={dataStatusStyle}>
+            📊 {subjects.length} subject{subjects.length !== 1 ? 's' : ''} saved
+          </p>
+        )}
       </header>
 
       <nav style={navStyle}>
@@ -254,7 +338,75 @@ const AttendanceCalculator = () => {
   );
 };
 
-// Styles
+// New Styles
+const subjectHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start'
+};
+
+const deleteButtonStyle = {
+  background: 'none',
+  border: 'none',
+  fontSize: '20px',
+  color: '#999',
+  cursor: 'pointer',
+  padding: '0',
+  width: '24px',
+  height: '24px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+};
+
+const clearAllContainerStyle = {
+  textAlign: 'center',
+  marginTop: '20px'
+};
+
+const clearAllButtonStyle = {
+  padding: '8px 16px',
+  backgroundColor: '#dc3545',
+  color: 'white',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontSize: '14px'
+};
+
+const safeStyle = {
+  backgroundColor: '#e8f5e8',
+  padding: '8px',
+  borderRadius: '4px',
+  fontSize: '14px',
+  color: '#2e7d32'
+};
+
+const percentageBadgeStyle = {
+  backgroundColor: '#007bff',
+  color: 'white',
+  padding: '2px 8px',
+  borderRadius: '12px',
+  fontSize: '12px',
+  marginLeft: '8px'
+};
+
+const moreRecordsStyle = {
+  textAlign: 'center',
+  padding: '10px',
+  color: '#666',
+  fontSize: '14px',
+  fontStyle: 'italic'
+};
+
+const dataStatusStyle = {
+  fontSize: '14px',
+  color: '#28a745',
+  margin: '5px 0 0 0'
+};
+
+// Existing Styles (keep all the previous styles you had)
 const containerStyle = {
   maxWidth: '600px',
   margin: '0 auto',
@@ -368,6 +520,7 @@ const attendanceButton = {
 const performanceItemStyle = {
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'center',
   padding: '10px 0',
   borderBottom: '1px solid #eee'
 };
@@ -387,7 +540,8 @@ const tableRowStyle = {
 
 const statusCellStyle = {
   flex: '1',
-  textTransform: 'capitalize'
+  textTransform: 'capitalize',
+  fontWeight: 'bold'
 };
 
 const subjectCellStyle = {
