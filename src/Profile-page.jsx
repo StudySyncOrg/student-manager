@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function ProfilePage() {
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+export default function ProfilePage({ tasks = [], focusStats = {} }) {
+  // Calculate stats from tasks and focus timer
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const pendingTasks = tasks.filter(task => !task.completed).length;
+  const totalTasks = tasks.length;
+
+  // Default focus stats if not provided
+  const {
+    completedSessions = 0,
+    focusMinutes = 0,
+    streak = 0
+  } = focusStats;
 
   const handleExport = () => {
     const data = {
       name: "Niyati !",
       email: "niyatisoni06@gmail.com",
       joinedDate: "10/10/2025",
-      completedTasks: 0,
-      pendingTasks: 0,
-      focusSessions: 0,
-      focusTime: "0m"
+      completedTasks: completedTasks,
+      pendingTasks: pendingTasks,
+      totalTasks: totalTasks,
+      focusSessions: completedSessions,
+      focusTime: `${focusMinutes}m`,
+      currentStreak: streak,
+      tasks: tasks // Include all tasks data
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -22,6 +34,12 @@ export default function ProfilePage() {
     a.download = 'profile-data.json';
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Get current date for joined date
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
   };
 
   return (
@@ -48,53 +66,53 @@ export default function ProfilePage() {
                   <rect x="2.5" y="3.5" width="11" height="10" rx="1" stroke="#64748b" strokeWidth="1.5"/>
                   <path d="M2.5 6.5H13.5M5.5 1.5V3.5M10.5 1.5V3.5" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
-                <span style={styles.infoText}>Joined 10/10/2025</span>
+                <span style={styles.infoText}>Joined {getCurrentDate()}</span>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Task Statistics */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#dcfce7'})}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="#16a34a" strokeWidth="2"/>
-                <circle cx="12" cy="12" r="6" stroke="#16a34a" strokeWidth="2"/>
-                <circle cx="12" cy="12" r="2" fill="#16a34a"/>
+                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div style={styles.statInfo}>
               <div style={styles.statLabel}>Completed Tasks</div>
-              <div style={styles.statValue}>0</div>
+              <div style={styles.statValue}>{completedTasks}</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#fed7aa'})}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="#ea580c" strokeWidth="2"/>
-                <circle cx="12" cy="12" r="6" stroke="#ea580c" strokeWidth="2"/>
-                <circle cx="12" cy="12" r="2" fill="#ea580c"/>
+                <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#ea580c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div style={styles.statInfo}>
               <div style={styles.statLabel}>Pending Tasks</div>
-              <div style={styles.statValue}>0</div>
+              <div style={styles.statValue}>{pendingTasks}</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#ddd6fe'})}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M6 9H4.5C3.67 9 3 9.67 3 10.5V17.5C3 18.33 3.67 19 4.5 19H6M6 9V19M6 9H8M6 19H8M18 9H19.5C20.33 9 21 9.67 21 10.5V17.5C21 18.33 20.33 19 19.5 19H18M18 9V19M18 9H16M18 19H16M16 5H8C6.89543 5 6 5.89543 6 7V19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7C18 5.89543 17.1046 5 16 5Z" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <div style={styles.statInfo}>
-              <div style={styles.statLabel}>Focus Sessions</div>
-              <div style={styles.statValue}>0</div>
+              <div style={styles.statLabel}>Total Tasks</div>
+              <div style={styles.statValue}>{totalTasks}</div>
             </div>
           </div>
+        </div>
 
+        {/* Focus Timer Statistics */}
+        <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#e9d5ff'})}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -103,54 +121,57 @@ export default function ProfilePage() {
               </svg>
             </div>
             <div style={styles.statInfo}>
+              <div style={styles.statLabel}>Focus Sessions</div>
+              <div style={styles.statValue}>{completedSessions}</div>
+            </div>
+          </div>
+
+          <div style={styles.statCard}>
+            <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#c7d2fe'})}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div style={styles.statInfo}>
               <div style={styles.statLabel}>Focus Time</div>
-              <div style={styles.statValue}>0m</div>
+              <div style={styles.statValue}>{focusMinutes}m</div>
+            </div>
+          </div>
+
+          <div style={styles.statCard}>
+            <div style={Object.assign({}, styles.statIcon, {backgroundColor: '#fecaca'})}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M13 7L13 17M9 11L9 17M17 3L17 17M21 21L3 21" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div style={styles.statInfo}>
+              <div style={styles.statLabel}>Current Streak</div>
+              <div style={styles.statValue}>{streak}</div>
             </div>
           </div>
         </div>
 
+        {/* Account Settings - Simplified */}
         <div style={styles.settingsCard}>
           <h3 style={styles.settingsTitle}>Account Settings</h3>
           
           <div style={styles.settingItem}>
             <div>
-              <div style={styles.settingLabel}>Email Notifications</div>
-              <div style={styles.settingDescription}>Receive notifications about your tasks and sessions</div>
-            </div>
-            <label style={styles.toggleSwitch}>
-              <input
-                type="checkbox"
-                checked={emailNotifications}
-                onChange={(e) => setEmailNotifications(e.target.checked)}
-                style={styles.toggleInput}
-              />
-              <span style={Object.assign({}, styles.toggleSlider, {backgroundColor: emailNotifications ? '#6366f1' : '#cbd5e1'})}></span>
-            </label>
-          </div>
-
-          <div style={styles.settingItem}>
-            <div>
-              <div style={styles.settingLabel}>Dark Mode</div>
-              <div style={styles.settingDescription}>Switch to dark theme</div>
-            </div>
-            <label style={styles.toggleSwitch}>
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={(e) => setDarkMode(e.target.checked)}
-                style={styles.toggleInput}
-              />
-              <span style={Object.assign({}, styles.toggleSlider, {backgroundColor: darkMode ? '#6366f1' : '#cbd5e1'})}></span>
-            </label>
-          </div>
-
-          <div style={styles.settingItem}>
-            <div>
               <div style={styles.settingLabel}>Data Export</div>
-              <div style={styles.settingDescription}>Download your data as JSON</div>
+              <div style={styles.settingDescription}>Download your tasks and focus data as JSON</div>
             </div>
             <button style={styles.exportButton} onClick={handleExport}>
               Export Data
+            </button>
+          </div>
+
+          <div style={styles.settingItem}>
+            <div>
+              <div style={styles.settingLabel}>Account Information</div>
+              <div style={styles.settingDescription}>View and manage your profile details</div>
+            </div>
+            <button style={styles.exportButton} onClick={() => alert('Edit profile clicked')}>
+              Edit Profile
             </button>
           </div>
         </div>
@@ -310,28 +331,6 @@ const styles = {
   settingDescription: {
     fontSize: '14px',
     color: '#64748b'
-  },
-  toggleSwitch: {
-    position: 'relative',
-    display: 'inline-block',
-    width: '48px',
-    height: '28px',
-    cursor: 'pointer'
-  },
-  toggleInput: {
-    opacity: 0,
-    width: 0,
-    height: 0
-  },
-  toggleSlider: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: '28px',
-    transition: 'background-color 0.3s',
-    cursor: 'pointer'
   },
   exportButton: {
     backgroundColor: '#eef2ff',

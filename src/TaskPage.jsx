@@ -4,8 +4,10 @@ import AddTaskModal from "./AddTaskModal";
 import TaskItem from "./Task-item";
 import './TaskPage.css';
 
-function Taskpage(){
-    const[tasks, setTasks]=useState([]);
+function Taskpage({ tasks, setTasks }){
+    // Remove these lines - using props instead
+    // const[tasks, setTasks]=useState([]);
+    
     const[isModalOpen, setIsModalOpen]=useState(false);
     const[taskEdit,setTaskEdit]= useState(null);
 

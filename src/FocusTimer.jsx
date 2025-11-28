@@ -8,15 +8,13 @@ const SESSION_DURATIONS = {
   "Long Break": 15 * 60, // 15 minutes
 };
 
-export default function FocusTimer() {
+export default function FocusTimer({ onStatsUpdate, currentStats }) {
   const [session, setSession] = useState("Focus");
   const [secondsLeft, setSecondsLeft] = useState(SESSION_DURATIONS["Focus"]);
   const [isRunning, setIsRunning] = useState(false);
 
-  // Optional stats
-  const [completedSessions, setCompletedSessions] = useState(0);
-  const [focusMinutes, setFocusMinutes] = useState(0);
-  const [streak, setStreak] = useState(0);
+  // Use stats from props instead of local state
+  const { completedSessions, focusMinutes, streak } = currentStats;
 
   // Format seconds as MM:SS
   const formatTime = (secs) => {
@@ -53,13 +51,17 @@ export default function FocusTimer() {
           clearInterval(interval);
           setIsRunning(false);
 
-          // Update stats when a session finishes
-          setCompletedSessions((c) => c + 1);
+          // Update stats when a session finishes using the callback
           if (session === "Focus") {
-            setFocusMinutes((m) => m + SESSION_DURATIONS["Focus"] / 60);
-            setStreak((s) => s + 1);
+            onStatsUpdate({
+              completedSessions: completedSessions + 1,
+              focusMinutes: focusMinutes + SESSION_DURATIONS["Focus"] / 60,
+              streak: streak + 1
+            });
           } else {
-            setStreak(0);
+            onStatsUpdate({
+              streak: 0
+            });
           }
           return 0;
         }
@@ -69,7 +71,7 @@ export default function FocusTimer() {
 
     // Cleanup
     return () => clearInterval(interval);
-  }, [isRunning, session]);
+  }, [isRunning, session, onStatsUpdate, completedSessions, focusMinutes, streak]);
 
   return (
     <div className="focus-timer-container">
@@ -95,7 +97,7 @@ export default function FocusTimer() {
         <div className="stat-card">
           <div className="stat-icon green"></div>
           <p>Focus Time</p>
-          <h3>{focusMinutes}m</h3>
+          <h3>{Math.round(focusMinutes)}m</h3>
         </div>
         <div className="stat-card">
           <div className="stat-icon pink"></div>
