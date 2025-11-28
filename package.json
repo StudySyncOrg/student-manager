@@ -1,7 +1,7 @@
 {
   "name": "student-manager",
   "version": "0.1.0",
-  "homepage": "https://lucius-lt.github.io/student-manager/",
+  "homepage": "https://StudySyncOrg.github.io/student-manager/",
   "private": true,
   "dependencies": {
     "@mui/icons-material": "^7.3.5",
